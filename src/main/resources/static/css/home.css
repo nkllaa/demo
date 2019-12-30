@@ -1,0 +1,21 @@
+.user{
+    background-color: #ffffff;
+    border-radius: 5px;
+    float: right;
+}
+.admin{
+    background-color:#F8F8FF;
+    position: fixed;
+    z-index: 10000;
+    left:60%;
+    top: 15%;
+}
+.top{
+    padding: 10px 25px;
+    position: fixed;
+    z-index: 10001;
+}
+.top span{
+    font-size: 40px;
+    color: #ffffff;
+}

@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>小云盘登陆</title>
+    <script src="js/jquery-3.3.1.js"></script>
+    <script src="js/vue-2.6.10.js"></script>
+    <link rel="stylesheet" href="layui/css/layui.css">
+    <script src="layui/layui.js"></script>
+    <link rel="stylesheet" href="css/home.css">
+    <link rel="stylesheet" href="css/layui_admin.css">
+    <link rel="stylesheet" href="css/layui_login.css">
+</head>
+<body>
+<div class="layadmin-user-login layadmin-user-display-show" id="LAY-user-login" style="display: none;">
+    <div class="layadmin-user-login-main">
+        <div class="layadmin-user-login-box layadmin-user-login-header">
+            <h2>小云盘</h2>
+            <p>仅用与学习参考，严禁商业用途</p>
+        </div>
+        <div class="layadmin-user-login-box layadmin-user-login-body layui-form" id="reg">
+            <div class="layui-form-item">
+                <label class="layadmin-user-login-icon layui-icon layui-icon-cellphone" for="LAY-user-login-cellphone"></label>
+                <input type="text" v-model="phoneNumber" name="phoneNumber" id="LAY-user-login-cellphone" lay-verify="phone" placeholder="手机" class="layui-input">
+            </div>
+            <div class="layui-form-item">
+                <div class="layui-row">
+                    <div class="layui-col-xs7">
+                        <label class="layadmin-user-login-icon layui-icon layui-icon-vercode" for="LAY-user-login-vercode"></label>
+                        <input type="text" name="vercode" id="LAY-user-login-vercode" lay-verify="required" placeholder="验证码" class="layui-input">
+                    </div>
+                    <div class="layui-col-xs5">
+                        <div style="margin-left: 10px;">
+                            <button type="button" class="layui-btn layui-btn-primary layui-btn-fluid" id="LAY-user-getsmscode">获取验证码</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layadmin-user-login-icon layui-icon layui-icon-password" for="LAY-user-login-password"></label>
+                <input type="password" v-model="password" name="password" id="LAY-user-login-password" lay-verify="pass" placeholder="密码" class="layui-input">
+            </div>
+            <div class="layui-form-item">
+                <label class="layadmin-user-login-icon layui-icon layui-icon-password" for="LAY-user-login-repass"></label>
+                <input type="password" v-model="repass" name="repass" id="LAY-user-login-repass" lay-verify="required" placeholder="确认密码" class="layui-input">
+            </div>
+            <div class="layui-form-item">
+                <label class="layadmin-user-login-icon layui-icon layui-icon-username" for="LAY-user-login-nickname"></label>
+                <input type="text" v-model="nickname" name="nickname" id="LAY-user-login-nickname" lay-verify="nickname" placeholder="昵称" class="layui-input">
+            </div>
+            <div class="layui-form-item">
+                <input type="checkbox" name="agreement" lay-skin="primary" title="同意用户协议" checked>
+            </div>
+            <div class="layui-form-item">
+                <button class="layui-btn layui-btn-fluid" lay-submit lay-filter="LAY-user-reg-submit"  v-on:click="userReg">注 册</button>
+            </div>
+            <div class="layui-trans layui-form-item layadmin-user-login-other">
+                <label>社交账号注册</label>
+                <a href="javascript:;"><i class="layui-icon layui-icon-login-qq"></i></a>
+                <a href="javascript:;"><i class="layui-icon layui-icon-login-wechat"></i></a>
+                <a href="javascript:;"><i class="layui-icon layui-icon-login-weibo"></i></a>
+
+                <a href="login.html" class="layadmin-user-jump-change layadmin-link layui-hide-xs">用已有帐号登入</a>
+                <a href="login.html" class="layadmin-user-jump-change layadmin-link layui-hide-sm layui-show-xs-inline-block">登入</a>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+</body>
+<script language="JavaScript">
+    //layui弹框主键
+    var layer=''
+    layui.use('layer', function(){
+        layer = layui.layer;
+    });
+    new Vue({
+        el:'#reg',
+        data:{
+            phoneNumber:'',
+            password:'',
+            nickname:'',
+            repass:''
+        },
+        methods:{
+            userReg:function () {
+                if (this.phoneNumber==''){
+                    layer.msg("请填写电话号码",{
+                        time: 2000, //2s后自动关闭
+                    });
+                    return
+                }
+                if (this.password==''){
+                    layer.msg("请填写密码",{
+                        time: 2000, //2s后自动关闭
+                    });
+                    return;
+                }
+                if (this.repass!=this.password){
+                    layer.msg("两次密码不一致",{
+                        time: 2000, //2s后自动关闭
+                    });
+                    return;
+                }
+                var reqData={
+                    phoneNumber:this.phoneNumber,
+                    password:this.password,
+                    nickname:this.nickname
+                }
+                $.ajax({
+                    url: "/userMain/userReg",
+                    data: reqData,
+                    dataType: "json",
+                    type:'POST',
+                    success: function (data) {
+                        if (data.response=="success"){
+                            layer.msg(data.msg,{
+                                time: 2000, //2s后自动关闭
+                            });
+                            setTimeout(function(){
+                                window.location.href="/login.html";
+                            },2000)
+                        }
+                        else {
+                            layer.msg(data.msg,{
+                                time: 2000, //2s后自动关闭
+                            });
+                        }
+                    },
+                    error: function () {
+                        alert("错误")
+                    }
+                })
+            }
+        },
+        watch:{
+            phoneNumber:function(val) {
+                if(!(/^[0-9]*$/.test(val))){
+                    layer.msg('请输入数字',{
+                        time: 2000, //2s后自动关闭
+                    });
+                    this.phoneNumber=""
+                }
+                else {
+                    this.phoneNumber=val
+                }
+            }
+        }
+    })
+</script>
+</html>
