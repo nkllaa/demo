@@ -52,13 +52,13 @@ public class UserController extends ResponseUtils{
         JSONObject jo =bizUserService.userRegister(userName,phoneNumber,password);
         return this.setResponse("success","注册成功",jo);
     }
-        /**
-         * @Description 用户文件上传
-         * @Author wanxin
-         * @Date 2019/6/7 12:42
-         * @Param [uploadFile, userId, folderId, fileType]
-         * @return java.lang.String
-         **/
+    /**
+     * @Description 用户文件上传
+     * @Author wanxin
+     * @Date 2019/6/7 12:42
+     * @Param [uploadFile, userId, folderId, fileType]
+     * @return java.lang.String
+     **/
     /*public  Map<String ,Object>  upload(MultipartFile uploadFile, long userId, long folderId, int fileType){
         JSONObject jo=bizUserService.upload(uploadFile,userId,folderId,fileType);
         return this.getResponse("success","上传成功",jo);

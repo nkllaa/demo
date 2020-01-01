@@ -183,8 +183,7 @@ public class BizFolderAndFileServiceImpl implements BizFolderAndFileService {
             }
             String zipPath="E:\\XYP\\ZIPTMP\\"+userId+".zip";
             //DownloadUilis.zip(zipPath,files,response);
-            ZipUtils zipUtils=new ZipUtils(zipPath,files);
-            zipUtils.zip(response);
+            DownloadUilis.downloadZip(zipPath,files,response);
         }
     }
     public JSONObject getFile(long fileId,HttpServletResponse response) {
