@@ -23,7 +23,7 @@ public interface UserFileService {
     * @Param [fileNames, folderPath, folder]
     * @return com.example.demo.entity.UserFile
     **/
-    UserFile save(String fileNames, String folderPath, Folder folder, FileTypeEnum fileTypeEnum);
+    UserFile save(String fileNames, String folderPath, Folder folder, FileTypeEnum fileTypeEnum,long size);
     /**
      * @Description 根据文件id查询
      * @Author wanxin

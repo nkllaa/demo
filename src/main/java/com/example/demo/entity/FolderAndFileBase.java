@@ -3,6 +3,7 @@ package com.example.demo.entity;
 import com.example.demo.entity.enumObj.BooleanEnum;
 
 import javax.persistence.*;
+import java.math.BigDecimal;
 import java.util.Date;
 
 @Entity
@@ -13,7 +14,7 @@ public class FolderAndFileBase {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     protected long id;
     //大小
-    protected double size;
+    protected BigDecimal size;
     //是否有效
     protected BooleanEnum isEffective;
     //创建时间
@@ -31,7 +32,7 @@ public class FolderAndFileBase {
     @JoinColumn(nullable = true)
     protected FolderAndFileBase folderAndFileBase;
 
-    public FolderAndFileBase(double size, BooleanEnum isEffective, Date createDate, String path, String name, User user) {
+    public FolderAndFileBase(BigDecimal size, BooleanEnum isEffective, Date createDate, String path, String name, User user) {
         this.size = size;
         this.isEffective = isEffective;
         this.createDate = createDate;
@@ -51,11 +52,11 @@ public class FolderAndFileBase {
         this.id = id;
     }
 
-    public double getSize() {
+    public BigDecimal getSize() {
         return size;
     }
 
-    public void setSize(double size) {
+    public void setSize(BigDecimal size) {
         this.size = size;
     }
 

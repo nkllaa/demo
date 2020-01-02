@@ -26,10 +26,10 @@ public class User implements Serializable{
     //是否有效
     private BooleanEnum isEffective;
     private Date createData;
-    //用户剩余空间单位GB
-    private BigDecimal surplusSpace;
-    //用户使用空间
+    //用户使用空间单位GB
     private BigDecimal useSpace;
+    //用户总空间单位GB
+    private BigDecimal totalSpace;
     //是否登录
     private BooleanEnum isLogin;
     //本次登录时间
@@ -67,13 +67,6 @@ public class User implements Serializable{
 
     public void setCreateData(Date createData) {
         this.createData = createData;
-    }
-
-    public BigDecimal getSurplusSpace() {
-        return surplusSpace;
-    }
-    public void setSurplusSpace(BigDecimal surplusSpace) {
-        this.surplusSpace = surplusSpace;
     }
 
     public BigDecimal getUseSpace() {
@@ -131,8 +124,18 @@ public class User implements Serializable{
     public void setIsEffective(BooleanEnum isEffective) {
         this.isEffective = isEffective;
     }
+    public BigDecimal getTotalSpace() {
+        return totalSpace;
+    }
 
-    public void create(String userName, String phoneNumber,String password){
+    public void setTotalSpace(BigDecimal totalSpace) {
+        this.totalSpace = totalSpace;
+    }
+
+    public User() {
+    }
+
+    public void create(String userName, String phoneNumber, String password){
         if (userName==null||userName.equals("")){
             throw new BizException("用户名不能为空");
         }
@@ -147,6 +150,7 @@ public class User implements Serializable{
         this.password= DigestUtils.md5DigestAsHex(password.getBytes());
         this.isEffective=BooleanEnum.YES;
         this.createData=new Date();
+        this.totalSpace=new BigDecimal(5);
     }
     /**
      * @Description 修改登录状态
@@ -162,5 +166,30 @@ public class User implements Serializable{
     public void loginOut(){
         this.loginOutDate=new Date();
         this.isLogin=BooleanEnum.NO;
+    }
+    /**
+     * @Description 文件上传时计算剩余空间
+     * @Author wanxin
+     * @Date 2020/1/2 16:10
+     * @Param [size]
+     * @return void
+     **/
+    public void addFileSize(BigDecimal size){
+        BigDecimal useSpace=this.useSpace.add(size);
+        if (this.useSpace.compareTo(this.totalSpace)== 1){
+            throw new BizException("文件太大，装不下啦！");
+        }
+        this.useSpace=useSpace;
+    }
+    /**
+     * @Description 文件删除时计算剩余空间
+     * @Author wanxin
+     * @Date 2020/1/2 16:10
+     * @Param [size]
+     * @return void
+     **/
+    public void reduceFileSize(BigDecimal size){
+        BigDecimal useSpace=this.useSpace.subtract(size);
+        this.useSpace=useSpace;
     }
 }

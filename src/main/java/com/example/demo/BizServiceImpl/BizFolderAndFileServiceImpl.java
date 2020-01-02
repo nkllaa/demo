@@ -10,8 +10,10 @@ import com.example.demo.exception.BizException;
 import com.example.demo.service.FolderAndFileBaseService;
 import com.example.demo.service.FolderService;
 import com.example.demo.service.UserFileService;
+import com.example.demo.service.UserService;
 import com.example.demo.utils.DateUtils;
 import com.example.demo.utils.DownloadUilis;
+import com.example.demo.utils.UserFileUtils;
 import com.example.demo.utils.ZipUtils;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
@@ -27,6 +29,7 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.servlet.http.HttpServletResponse;
 import java.io.File;
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -39,6 +42,9 @@ public class BizFolderAndFileServiceImpl implements BizFolderAndFileService {
     UserFileService userFileService;
     @Autowired
     FolderAndFileBaseService folderAndFileBaseService;
+    @Autowired
+    UserService userService;
+
 
     public JSONObject getUserFolderAndFileRoot(long userId) {
         //获取用户根目录
@@ -82,6 +88,12 @@ public class BizFolderAndFileServiceImpl implements BizFolderAndFileService {
         if (folder==null){
             throw new BizException("文件夹不存在");
         }
+        //判断用户存储空间是否足够
+        User user=folder.getUser();
+        user.addFileSize(UserFileUtils.calculationGB(new BigDecimal(file.getSize())));
+        userService.updata(user);
+
+
         //为上传的文件的名字添加一个时间戳保证文件的唯一性
         long time = System.currentTimeMillis();
         System.out.println(file.getOriginalFilename());
@@ -96,7 +108,7 @@ public class BizFolderAndFileServiceImpl implements BizFolderAndFileService {
         //获取文件类型的枚举类型，图片，视频，音频，文档，其他
         FileTypeEnum fileTypeEnum =com.example.demo.utils.FileUtils.getFileType(fileName[fileName.length-1]);
         //保存文件
-        userFileService.save(fileNames,folder.getPath(),folder,fileTypeEnum);
+        userFileService.save(fileNames,folder.getPath(),folder,fileTypeEnum,file.getSize());
     }
 
     public void createFolder(long folderId, String name, User user) {

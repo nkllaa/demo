@@ -2,9 +2,12 @@ package com.example.demo.entity;
 
 import com.example.demo.entity.enumObj.BooleanEnum;
 import com.example.demo.entity.enumObj.FileTypeEnum;
+import com.example.demo.utils.FileUtils;
+import com.example.demo.utils.UserFileUtils;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.Date;
 
 //用户文件
@@ -18,7 +21,7 @@ public class UserFile extends FolderAndFileBase implements Serializable {
     public UserFile() {
     }
 
-    public UserFile(double size, BooleanEnum isEffective, Date createDate, String path, String name, User user, FileTypeEnum fileTypeEnum) {
+    public UserFile(BigDecimal size, BooleanEnum isEffective, Date createDate, String path, String name, User user, FileTypeEnum fileTypeEnum) {
         super(size, isEffective, createDate, path, name, user);
         this.fileTypeEnum = fileTypeEnum;
     }
@@ -42,12 +45,13 @@ public class UserFile extends FolderAndFileBase implements Serializable {
      * @Param [fileNames, folderPath]
      * @return com.example.demo.entity.UserFile
      **/
-    public void create(String fileNames, String path,Folder folder,FileTypeEnum fileTypeEnum) {
+    public void create(String fileNames, String path,Folder folder,FileTypeEnum fileTypeEnum,long fileSize) {
         this.name=fileNames;
         this.path=path+"\\"+this.name;
         this.createDate=new Date();
         this.isEffective=BooleanEnum.YES;
         this.fileTypeEnum=fileTypeEnum;
         this.folderAndFileBase=folder;
+        this.size= UserFileUtils.calculationMB(new BigDecimal(fileSize));
     }
 }
