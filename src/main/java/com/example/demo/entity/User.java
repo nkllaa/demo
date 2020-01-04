@@ -145,12 +145,15 @@ public class User implements Serializable{
         if (password==null||password.equals("")){
             throw new BizException("密码不能为空");
         }
+        String str=phoneNumber+password;
+        //加密的密码
+        this.password= DigestUtils.md5DigestAsHex(DigestUtils.md5DigestAsHex(str.getBytes()).getBytes());
         this.userName=userName;
         this.phoneNumber=phoneNumber;
-        this.password= DigestUtils.md5DigestAsHex(password.getBytes());
         this.isEffective=BooleanEnum.YES;
         this.createData=new Date();
         this.totalSpace=new BigDecimal(5);
+        this.useSpace=BigDecimal.ZERO;
     }
     /**
      * @Description 修改登录状态

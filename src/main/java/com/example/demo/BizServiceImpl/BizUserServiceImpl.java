@@ -27,6 +27,8 @@ import javax.servlet.http.HttpServletRequest;
 
 import java.io.File;
 import java.io.IOException;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 
 @Service("bizUserService")
 public class BizUserServiceImpl implements BizUserService {
@@ -46,14 +48,17 @@ public class BizUserServiceImpl implements BizUserService {
     @Autowired
     private TokenUtils tokenUtils;
 
-    @Transactional(rollbackFor  = Exception.class )
-    public JSONObject userRegister(String userName,String phoneNumber,String password) throws IOException {
-        User user=userService.getByPhoneNumber(phoneNumber);
-        if (user!=null){
+    public JSONObject userRegister(String userName,String phoneNumber,String password){
+        User user1=userService.getByPhoneNumber(phoneNumber);
+        if (user1!=null){
             throw new BizException("该手机号已经被注册");
         }
+        User user2=userService.getByUserName(phoneNumber);
+        if (user2!=null){
+            throw new BizException("该用户名已注册");
+        }
         //用户注册
-        user=userService.create(userName,phoneNumber,password);
+        User user=userService.create(userName,phoneNumber,password);
         //创建用户根文件夹
         String path="e:\\XYP\\"+user.getUserName()+user.getId();
         String folderName=user.getUserName()+user.getId();
@@ -77,15 +82,6 @@ public class BizUserServiceImpl implements BizUserService {
 
         return jo;
     }
-    public JSONObject upload(MultipartFile uploadFile, long userId, long folderId,int fileType) {
-        Folder folder=folderService.getById(folderId);
-        if (folder==null){
-            throw new BizException("没有找到对应的文件夹");
-        }
-
-        return null;
-    }
-
     //wx小程序登录
     public JSONObject wxUusetLogin(String phoneNumber, String password,String iv,String encryptedData,String code,String session_3rd,String sessionId) {
         JSONObject jo=new JSONObject();
@@ -121,6 +117,22 @@ public class BizUserServiceImpl implements BizUserService {
             jo.put("phoneNumber",user.getPhoneNumber());
             jo.put("session_3rd",str);
         }
+        return jo;
+    }
+    public JSONObject getUserInfo(long userId) {
+        User user=userService.getById(userId);
+        if (user==null){
+            throw new BizException("没有找到对应用户");
+        }
+        JSONObject jo=new JSONObject();
+
+        BigDecimal percentage=user.getUseSpace().divide(user.getTotalSpace(),5, RoundingMode.HALF_UP).
+                multiply(new BigDecimal(100));
+
+        jo.put("useSpace",user.getUseSpace());
+        jo.put("surplus",user.getTotalSpace().subtract(user.getUseSpace()));
+        jo.put("percentage",percentage);
+
         return jo;
     }
 }

@@ -24,15 +24,6 @@ public interface BizUserService {
      **/
     JSONObject usetLogin(String phoneNumber, String password, HttpServletRequest request);
 
-   /**
-    * @Description 文件上传
-    * @Author wanxin
-    * @Date 2019/6/2 16:04
-    * @Param [uploadFile, userId, folderId, fileType]
-    * @return net.sf.json.JSONObject
-    **/
-    JSONObject upload(MultipartFile uploadFile, long userId, long folderId,int fileType);
-
     /**
      * @Description 微信小程序登陆
      * @Author wanxin
@@ -41,4 +32,13 @@ public interface BizUserService {
      * @return net.sf.json.JSONObject
      **/
     JSONObject wxUusetLogin(String phoneNumber,String password,String iv,String encryptedData,String code,String session_3rd,String sessionId);
+
+    /**
+     * @Description 获取用户信息
+     * @Author wanxin
+     * @Date 2020/1/2 17:12
+     * @Param [userId]
+     * @return net.sf.json.JSONObject
+     **/
+    JSONObject getUserInfo(long userId);
 }

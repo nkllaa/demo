@@ -11,10 +11,7 @@ import com.example.demo.service.FolderAndFileBaseService;
 import com.example.demo.service.FolderService;
 import com.example.demo.service.UserFileService;
 import com.example.demo.service.UserService;
-import com.example.demo.utils.DateUtils;
-import com.example.demo.utils.DownloadUilis;
-import com.example.demo.utils.UserFileUtils;
-import com.example.demo.utils.ZipUtils;
+import com.example.demo.utils.*;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 import org.apache.commons.io.FileUtils;
@@ -90,25 +87,30 @@ public class BizFolderAndFileServiceImpl implements BizFolderAndFileService {
         }
         //判断用户存储空间是否足够
         User user=folder.getUser();
-        user.addFileSize(UserFileUtils.calculationGB(new BigDecimal(file.getSize())));
-        userService.updata(user);
+        user=HibernateUtil.initializeAndUnproxy(user);
 
+        BigDecimal size=new BigDecimal(file.getSize());
+        System.out.println(size);
+        BigDecimal useSpace=UserFileUtils.calculationGB(size);
+        System.out.println(useSpace);
+        user.addFileSize(useSpace);
+        userService.updata(user);
 
         //为上传的文件的名字添加一个时间戳保证文件的唯一性
         long time = System.currentTimeMillis();
-        System.out.println(file.getOriginalFilename());
         String fileName []=file.getOriginalFilename().replace(" ","").split("\\.");
         String fileNames=fileName[0]+"-"+time+"."+fileName[fileName.length-1];
         File uploadFile=new File(folder.getPath(),fileNames);
+        //获取文件类型的枚举类型，图片，视频，音频，文档，其他
+        FileTypeEnum fileTypeEnum =com.example.demo.utils.FileUtils.getFileType(fileName[fileName.length-1]);
+        //存入文件信息
+        userFileService.save(fileNames,folder.getPath(),folder,fileTypeEnum,file.getSize());
+        //保存文件
         try {
             FileUtils.writeByteArrayToFile(uploadFile,file.getBytes());
         } catch (IOException e) {
             e.printStackTrace();
         }
-        //获取文件类型的枚举类型，图片，视频，音频，文档，其他
-        FileTypeEnum fileTypeEnum =com.example.demo.utils.FileUtils.getFileType(fileName[fileName.length-1]);
-        //保存文件
-        userFileService.save(fileNames,folder.getPath(),folder,fileTypeEnum,file.getSize());
     }
 
     public void createFolder(long folderId, String name, User user) {

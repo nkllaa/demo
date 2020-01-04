@@ -52,6 +52,15 @@ public class UserController extends ResponseUtils{
         JSONObject jo =bizUserService.userRegister(userName,phoneNumber,password);
         return this.setResponse("success","注册成功",jo);
     }
+
+    @RequestMapping("/getUserInfo")
+    public Map<String,Object> getUserInfo(long userId){
+
+        JSONObject jo=bizUserService.getUserInfo(userId);
+
+        return this.setResponse("success","注册成功",jo);
+    }
+
     /**
      * @Description 用户文件上传
      * @Author wanxin
@@ -63,4 +72,6 @@ public class UserController extends ResponseUtils{
         JSONObject jo=bizUserService.upload(uploadFile,userId,folderId,fileType);
         return this.getResponse("success","上传成功",jo);
     }*/
+
+
 }

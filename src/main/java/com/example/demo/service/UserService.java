@@ -7,7 +7,7 @@ import net.sf.json.JSONObject;
 public interface UserService {
 
 
-    public User create(String userName,String phoneNumber,String password);
+    User create(String userName,String phoneNumber,String password);
     /**
      * @Description 用户登陆
      * @Author wanxin
@@ -24,7 +24,14 @@ public interface UserService {
      * @return com.example.demo.entity.User
      **/
     User getByPhoneNumber(String phoneNumber);
-
+    /**
+     * @Description 根据用户名查询
+     * @Author wanxin
+     * @Date 2020/1/2 18:04
+     * @Param [userName]
+     * @return com.example.demo.entity.User
+     **/
+    User getByUserName(String userName);
     /**
      * @Description 更新用户信息
      * @Author wanxin
@@ -33,4 +40,12 @@ public interface UserService {
      * @return void
      **/
     void updata(User user);
+    /**
+     * @Description 获取用户信息
+     * @Author wanxin
+     * @Date 2020/1/2 17:21
+     * @Param [userId]
+     * @return com.example.demo.entity.User
+     **/
+    User getById(long userId);
 }

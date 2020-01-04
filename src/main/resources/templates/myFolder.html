@@ -53,7 +53,7 @@
         <div class="layui-row layui-col-space15">
             <div id="myFolder" class="layui-col-md12">
                 <div v-if="folderAndFileList.length==0" >
-                    <button class="layui-btn test-upload-demoMore upload" lay-data="{'/folderAndFile/upload': &#39;/a/&#39;}">文件上传</button><input class="layui-upload-file" type="file" accept="undefined" name="file">
+                    <button class="layui-btn test-upload-demoMore upload1" lay-data="{'/folderAndFile/upload': &#39;/a/&#39;}">文件上传</button><input class="layui-upload-file" type="file" accept="undefined" name="file">
                     <button class="layui-btn" data-type="getCheckLength" v-on:click="createFolder">创建文件夹</button>
                     <button class="layui-btn" data-type="getCheckLength" v-if="!isRoot" v-on:click="getFolderAndFile(superstratumId)" style="margin-left: 0px">返回上级</button>
                     <center><h1>{{message}}╰(￣▽￣)╭</h1></center>
@@ -63,7 +63,7 @@
                     <div class="layui-card-header">我的文件</div>
                     <div class="layui-card-body">
                         <div class="layui-btn-group test-table-operate-btn" style="margin-bottom: 10px;">
-                            <button class="layui-btn test-upload-demoMore upload"  lay-data="{'/folderAndFile/upload': &#39;/a/&#39;}">文件上传</button><input class="layui-upload-file" type="file" accept="undefined" name="file">
+                            <button class="layui-btn test-upload-demoMore upload2"  lay-data="{'/folderAndFile/upload': &#39;/a/&#39;}">文件上传</button><input class="layui-upload-file" type="file" accept="undefined" name="file">
                             <button class="layui-btn" data-type="getCheckLength" v-on:click="createFolder">创建文件夹</button>
                             <button class="layui-btn" data-type="getCheckLength" v-on:click="deleteAll">删除已选中</button>
                             <button class="layui-btn" data-type="getCheckLength" v-on:click="downloadAll">下载已选中</button>
@@ -157,7 +157,38 @@
     layui.use('upload', function(){
         var upload = layui.upload;
         upload.render({
-            elem: '.upload',
+            elem: '.upload1',
+            url: '/folderAndFile/upload',
+            data:{'folderId':vueapp.folderId},
+            accept:'file',//上传文件的类型，file表示所有类型
+            field:'XYPFile',//上传文件的参数名字
+            size:'307200',//文件上传的大小300M，单位KB
+            before: function(obj){ //obj参数包含的信息，跟 choose回调完全一致，可参见上文。
+                layer.load(2,{shade: [0.5, 'gray'], content: '上传中...'}); //上传loading
+            }
+            ,done: function(res, index, upload){
+                if (res.response=="success"){
+                    layer.msg(res.msg, {
+                        time: 2000, //2s后自动关闭
+                    });
+                    vueapp.getFolderAndFile(vueapp.folderId);
+                }
+                else {
+                    layer.msg(res.msg, {
+                        time: 2000, //2s后自动关闭
+                    });
+                }
+                layer.closeAll('loading'); //关闭loading
+            }
+            ,error: function(index, upload){
+                layer.closeAll('loading'); //关闭loading
+            }
+        });
+    })
+    layui.use('upload', function(){
+        var upload = layui.upload;
+        upload.render({
+            elem: '.upload2',
             url: '/folderAndFile/upload',
             data:{'folderId':vueapp.folderId},
             accept:'file',//上传文件的类型，file表示所有类型
@@ -257,6 +288,7 @@
                     dataType: "json",
                     type: 'GET',
                     success: function (data) {
+                        debugger
                         if (data.response == "success") {
                             that.folderAndFileList = data.data.folderAndFileBasesJa
                             that.folderId=data.data.folderId;
@@ -401,6 +433,12 @@
                     trs.eq(i).find("td").eq(0).find("input[type=checkbox]:checked").each(function () {
                         Ids=$(this).val()+","+Ids;
                     })
+                }
+                if (Ids==""){
+                    layer.msg("请选择要下载的文件", {
+                        time: 2000, //2s后自动关闭
+                    });
+                    return
                 }
                 layer.alert(Ids)
                 window.location.href="/folderAndFile/download?Ids="+Ids

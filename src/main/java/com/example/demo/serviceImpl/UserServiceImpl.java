@@ -41,7 +41,13 @@ public class UserServiceImpl implements UserService {
     public User getByPhoneNumber(String phoneNumber) {
         return userDao.findByPhoneNumber(phoneNumber);
     }
+    public User getByUserName(String userName) {
+        return userDao.findByUserName(userName);
+    }
     public void updata(User user) {
         userDao.save(user);
+    }
+    public User getById(long userId) {
+        return userDao.getById(userId);
     }
 }
