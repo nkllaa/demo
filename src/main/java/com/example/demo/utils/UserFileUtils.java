@@ -14,6 +14,4 @@ public class UserFileUtils {
         return size.divide(new BigDecimal(1073741824),2, RoundingMode.HALF_UP);
     }
 
-    public static void main(String[] args) {
-    }
 }

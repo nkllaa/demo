@@ -6,6 +6,7 @@ import org.springframework.aop.aspectj.AspectJExpressionPointcut;
 import org.springframework.aop.support.DefaultPointcutAdvisor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionDefinition;
@@ -18,13 +19,18 @@ import org.springframework.transaction.interceptor.TransactionInterceptor;
 @Aspect
 @Configuration
 public class AopTransactionalConfig {
-   public static final String AOP_POINTCUT_EXPRESSION="execution(* com.example.demo.BizServiceImpl.*.*(..))";
+    /**
+     * @Description execution(* com.example.demo.BizServiceImpl.. * . * ( ..)) 在服务Biz层上添加事务表示该包下所有的子包，所有类，
+     * 所以返回值类型和所以参数的方法都添加上事务
+     **/
+    public static final String AOP_POINTCUT_EXPRESSION="execution(* com.example.demo.BizServiceImpl..*.*(..))";
 
     @Autowired
     private PlatformTransactionManager transactionManager;
 
-    @Bean()
-    public TransactionInterceptor txAdvice(){
+    @Bean
+    public TransactionInterceptor txAdvice() {
+
         DefaultTransactionAttribute txAttr_REQUIRED = new DefaultTransactionAttribute();
         txAttr_REQUIRED.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRED);
 
@@ -45,8 +51,10 @@ public class AopTransactionalConfig {
         source.addTransactionalMethod("list*", txAttr_REQUIRED_READONLY);
         source.addTransactionalMethod("count*", txAttr_REQUIRED_READONLY);
         source.addTransactionalMethod("is*", txAttr_REQUIRED_READONLY);
+        source.addTransactionalMethod("*", txAttr_REQUIRED);
         return new TransactionInterceptor(transactionManager, source);
     }
+
 
     @Bean
     public Advisor txAdviceAdvisor() {

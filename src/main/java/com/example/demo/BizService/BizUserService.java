@@ -31,7 +31,7 @@ public interface BizUserService {
      * @Param [phoneNumber, password]
      * @return net.sf.json.JSONObject
      **/
-    JSONObject wxUusetLogin(String phoneNumber,String password,String iv,String encryptedData,String code,String session_3rd,String sessionId);
+    JSONObject wxUserLogin(String phoneNumber,String password,String iv,String encryptedData,String code,String session_3rd,String sessionId);
 
     /**
      * @Description 获取用户信息
@@ -41,4 +41,12 @@ public interface BizUserService {
      * @return net.sf.json.JSONObject
      **/
     JSONObject getUserInfo(long userId);
+    /**
+     * @Description 获取用户最近上传的文件，半个月，如果半个月没有上传就往前推移
+     * @Author wanxin
+     * @Date 2020/1/7 19:35
+     * @Param [userId]
+     * @return net.sf.json.JSONObject
+     **/
+    JSONObject getLately(long userId);
 }

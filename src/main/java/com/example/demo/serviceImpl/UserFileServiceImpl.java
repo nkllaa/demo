@@ -22,8 +22,7 @@ public class UserFileServiceImpl implements UserFileService {
     public UserFile save(String fileNames, String folderPath, Folder folder, FileTypeEnum fileTypeEnum,long size) {
         UserFile userFile=new UserFile();
         userFile.create(fileNames,folderPath,folder,fileTypeEnum,size);
-        userFileDao.save(userFile);
-        return userFile;
+        return  userFileDao.save(userFile);
     }
 
     @Override

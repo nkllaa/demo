@@ -2,10 +2,13 @@ package com.example.demo.BizServiceImpl;
 
 import com.example.demo.BizService.BizUserService;
 import com.example.demo.entity.Folder;
+import com.example.demo.entity.FolderLogger;
 import com.example.demo.entity.User;
 
+import com.example.demo.entity.enumObj.BooleanEnum;
 import com.example.demo.exception.BizException;
 import com.example.demo.pojo.Wx3re_Session;
+import com.example.demo.service.FolderLoggerService;
 import com.example.demo.service.FolderService;
 import com.example.demo.service.UserFileService;
 import com.example.demo.service.UserService;
@@ -47,6 +50,8 @@ public class BizUserServiceImpl implements BizUserService {
     private RedisUtil redisUtil;
     @Autowired
     private TokenUtils tokenUtils;
+    @Autowired
+    private FolderLoggerService folderLoggerService;
 
     public JSONObject userRegister(String userName,String phoneNumber,String password){
         User user1=userService.getByPhoneNumber(phoneNumber);
@@ -60,9 +65,13 @@ public class BizUserServiceImpl implements BizUserService {
         //用户注册
         User user=userService.create(userName,phoneNumber,password);
         //创建用户根文件夹
-        String path="e:\\XYP\\"+user.getUserName()+user.getId();
+        String path="e:\\XYP\\User\\"+user.getUserName()+user.getId();
         String folderName=user.getUserName()+user.getId();
         Folder folder =folderService.create(user,path,folderName);
+
+        //创建文件夹操作记录
+        folderLoggerService.save(user,folder, BooleanEnum.YES,BooleanEnum.NO,BooleanEnum.NO,"用户注册创建根目录");
+
         File file=new File(path);
         //创建文件夹
         file.mkdirs();
@@ -83,7 +92,7 @@ public class BizUserServiceImpl implements BizUserService {
         return jo;
     }
     //wx小程序登录
-    public JSONObject wxUusetLogin(String phoneNumber, String password,String iv,String encryptedData,String code,String session_3rd,String sessionId) {
+    public JSONObject wxUserLogin(String phoneNumber, String password,String iv,String encryptedData,String code,String session_3rd,String sessionId) {
         JSONObject jo=new JSONObject();
         //是否登录
         boolean flag=true;
@@ -132,6 +141,21 @@ public class BizUserServiceImpl implements BizUserService {
         jo.put("useSpace",user.getUseSpace());
         jo.put("surplus",user.getTotalSpace().subtract(user.getUseSpace()));
         jo.put("percentage",percentage);
+
+        return jo;
+    }
+    public JSONObject getLately(long userId) {
+        JSONObject jo=new JSONObject();
+
+
+
+        /*jo.put("fileId",);
+        jo.put("fileName",);
+        jo.put("filePath",);
+        jo.put("fileType",);
+        jo.put("fileCreateDate",);*/
+
+
 
         return jo;
     }

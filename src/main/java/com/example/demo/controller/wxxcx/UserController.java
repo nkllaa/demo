@@ -37,7 +37,7 @@ public class UserController extends ResponseUtils{
     public Map<String ,Object> userLogin(String phoneNumber, String password,
                                          String iv, String encryptedData, String code,
                                          String session_3rd, HttpServletRequest request){
-        JSONObject jo=bizUserService.wxUusetLogin(phoneNumber,password,iv,encryptedData,code,session_3rd,request.getSession().getId());
+        JSONObject jo=bizUserService.wxUserLogin(phoneNumber,password,iv,encryptedData,code,session_3rd,request.getSession().getId());
         return this.setResponse("success","登录成功",jo);
     }
     /**
@@ -60,6 +60,11 @@ public class UserController extends ResponseUtils{
 
         return this.setResponse("success","注册成功",jo);
     }
+    @RequestMapping("/getLately")
+    public Map<String ,Object> getLately(long userId){
+        JSONObject jo=bizUserService.getLately(userId);
+        return this.setResponse("success","注册成功",jo);
+    }
 
     /**
      * @Description 用户文件上传
@@ -72,6 +77,5 @@ public class UserController extends ResponseUtils{
         JSONObject jo=bizUserService.upload(uploadFile,userId,folderId,fileType);
         return this.getResponse("success","上传成功",jo);
     }*/
-
 
 }

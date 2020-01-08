@@ -1,6 +1,7 @@
 package com.example.demo.dao;
 
 import com.example.demo.entity.UserFile;
+import com.example.demo.entity.enumObj.BooleanEnum;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
@@ -26,6 +27,7 @@ public interface UserFileDao extends JpaRepository<UserFile,Long>,JpaSpecificati
      * @Param [userFileId]
      * @return com.example.demo.entity.UserFile
      **/
+    @Query("from UserFile where id=:userFileId and isEffective=0")
     UserFile getById(long userFileId);
 
     /**
@@ -35,7 +37,7 @@ public interface UserFileDao extends JpaRepository<UserFile,Long>,JpaSpecificati
      * @Param [Ids]
      * @return com.example.demo.entity.UserFile
      **/
-    @Query(value = "from  UserFile where id in :Ids")
+    @Query(value = "from  UserFile where id in :Ids and isEffective=0")
     List<UserFile> getByIds(@Param("Ids") long[] Ids);
 
 }

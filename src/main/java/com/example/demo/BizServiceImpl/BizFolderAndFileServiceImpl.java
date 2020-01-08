@@ -1,17 +1,13 @@
 package com.example.demo.BizServiceImpl;
 
 import com.example.demo.BizService.BizFolderAndFileService;
-import com.example.demo.entity.Folder;
-import com.example.demo.entity.FolderAndFileBase;
-import com.example.demo.entity.User;
-import com.example.demo.entity.UserFile;
+import com.example.demo.entity.*;
+import com.example.demo.entity.enumObj.BooleanEnum;
 import com.example.demo.entity.enumObj.FileTypeEnum;
 import com.example.demo.exception.BizException;
-import com.example.demo.service.FolderAndFileBaseService;
-import com.example.demo.service.FolderService;
-import com.example.demo.service.UserFileService;
-import com.example.demo.service.UserService;
+import com.example.demo.service.*;
 import com.example.demo.utils.*;
+import net.coobird.thumbnailator.Thumbnails;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 import org.apache.commons.io.FileUtils;
@@ -41,6 +37,10 @@ public class BizFolderAndFileServiceImpl implements BizFolderAndFileService {
     FolderAndFileBaseService folderAndFileBaseService;
     @Autowired
     UserService userService;
+    @Autowired
+    FolderLoggerService folderLoggerService;
+    @Autowired
+    UserFileLoggerService userFileLoggerService;
 
 
     public JSONObject getUserFolderAndFileRoot(long userId) {
@@ -88,26 +88,30 @@ public class BizFolderAndFileServiceImpl implements BizFolderAndFileService {
         //判断用户存储空间是否足够
         User user=folder.getUser();
         user=HibernateUtil.initializeAndUnproxy(user);
-
         BigDecimal size=new BigDecimal(file.getSize());
-        System.out.println(size);
         BigDecimal useSpace=UserFileUtils.calculationGB(size);
-        System.out.println(useSpace);
         user.addFileSize(useSpace);
         userService.updata(user);
 
         //为上传的文件的名字添加一个时间戳保证文件的唯一性
         long time = System.currentTimeMillis();
-        String fileName []=file.getOriginalFilename().replace(" ","").split("\\.");
-        String fileNames=fileName[0]+"-"+time+"."+fileName[fileName.length-1];
-        File uploadFile=new File(folder.getPath(),fileNames);
+        String fileNames []=file.getOriginalFilename().replace(" ","").split("\\.");
+        String fileName=fileNames[0]+"-"+time+"."+fileNames[fileNames.length-1];
+        File uploadFile=new File(folder.getPath(),fileName);
         //获取文件类型的枚举类型，图片，视频，音频，文档，其他
-        FileTypeEnum fileTypeEnum =com.example.demo.utils.FileUtils.getFileType(fileName[fileName.length-1]);
+        FileTypeEnum fileTypeEnum =com.example.demo.utils.FileUtils.getFileType(fileNames[fileNames.length-1]);
         //存入文件信息
-        userFileService.save(fileNames,folder.getPath(),folder,fileTypeEnum,file.getSize());
+        UserFile userFile=userFileService.save(fileName,folder.getPath(),folder,fileTypeEnum,file.getSize());
+        //创建用户文件操作记录
+        userFileLoggerService.save(user,userFile,BooleanEnum.YES,BooleanEnum.NO,BooleanEnum.NO,"用户文件上传");
+
         //保存文件
         try {
             FileUtils.writeByteArrayToFile(uploadFile,file.getBytes());
+            //文件是图片并且大于1MB,就压缩图片
+            if (fileTypeEnum==FileTypeEnum.Picture && file.getSize()>1048576){
+                ImageUtil.compressionQuality(uploadFile.getPath());
+            }
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -127,6 +131,8 @@ public class BizFolderAndFileServiceImpl implements BizFolderAndFileService {
         newFolder.create(path,name,folder,user);
         folderService.save(newFolder);
 
+        //创建文件夹操作记录
+        folderLoggerService.save(user,folder, BooleanEnum.YES,BooleanEnum.NO,BooleanEnum.NO,"用户创建文件夹");
         //创建文件夹
 
         File file=new File(path);
