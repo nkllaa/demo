@@ -12,7 +12,7 @@ import javax.servlet.http.HttpServletResponse;
  * @Date 2019/7/21 11:28
  **/
 public class XYPWXInterceptor implements HandlerInterceptor {
-    public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
+    public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) {
 
         if ("".equals(request.getParameter("session_3rd").trim())  || null == request.getParameter("session_3rd")) {
             throw new BizException("请求失败");

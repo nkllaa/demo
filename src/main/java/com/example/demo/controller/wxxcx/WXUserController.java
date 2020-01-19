@@ -21,7 +21,7 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/userXCX")
-public class UserController extends ResponseUtils{
+public class WXUserController extends ResponseUtils{
     @Autowired
     @Qualifier("bizUserService")
     BizUserService bizUserService;
@@ -52,7 +52,13 @@ public class UserController extends ResponseUtils{
         JSONObject jo =bizUserService.userRegister(userName,phoneNumber,password);
         return this.setResponse("success","注册成功",jo);
     }
-
+    /**
+     * @Description 获取用户信息
+     * @Author wanxin
+     * @Date 2020/1/19 10:58
+     * @Param [userId]
+     * @return java.util.Map<java.lang.String,java.lang.Object>
+     **/
     @RequestMapping("/getUserInfo")
     public Map<String,Object> getUserInfo(long userId){
 
@@ -60,10 +66,17 @@ public class UserController extends ResponseUtils{
 
         return this.setResponse("success","注册成功",jo);
     }
+    /**
+     * @Description 获取用户最近的上传记录
+     * @Author wanxin
+     * @Date 2020/1/19 10:59
+     * @Param [userId]
+     * @return java.util.Map<java.lang.String,java.lang.Object>
+     **/
     @RequestMapping("/getLately")
     public Map<String ,Object> getLately(long userId){
         JSONObject jo=bizUserService.getLately(userId);
-        return this.setResponse("success","注册成功",jo);
+        return this.setResponse("success","获取成功",jo);
     }
 
     /**

@@ -1,6 +1,6 @@
 package com.example.demo.exception;
 
-public class LoginException extends Exception{
+public class LoginException extends RuntimeException{
     public LoginException(){
         super();
     }

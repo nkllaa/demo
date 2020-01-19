@@ -1,6 +1,8 @@
 package com.example.demo.controller.websiteUser;
 
 import com.example.demo.BizService.BizUserService;
+import com.example.demo.exception.BizException;
+import com.example.demo.exception.LoginException;
 import com.example.demo.utils.ResponseUtils;
 import net.sf.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -85,7 +85,6 @@ public class BizUserServiceImpl implements BizUserService {
         jo.put("userName",user.getId());
         jo.put("userId",user.getId());
         jo.put("phoneNumber",user.getPhoneNumber());
-
         //存入session
             request.getSession().setAttribute("userInfo" ,user);
 
