@@ -25,7 +25,7 @@ public class XYPWebConfig implements WebMvcConfigurer {
     }
     public void addInterceptors(InterceptorRegistry registry){
         //注册拦截器
-        //网页端拦截器                                                                   //不拦截的路径
+        //网页端拦截器                                                                                         //不拦截的路径
         registry.addInterceptor(new XYPMinInterceptor()).addPathPatterns("/userMain/**","/folderAndFile/**").excludePathPatterns("/static/**",
                 "/userMain/Logout","/userMain/userLogin","/userMain/userReg");
         //小程序拦截器
@@ -44,11 +44,19 @@ public class XYPWebConfig implements WebMvcConfigurer {
         //resourceHandlerRegistry.addResourceHandler("/static/**").addResourceLocations("classpath:/static/");
 
     }
+
+    /**
+     * @Description 设置文件上传的大小
+     * @Author wanxin
+     * @Date 2020/2/9 15:09
+     * @Param []
+     * @return javax.servlet.MultipartConfigElement
+     **/
     @Bean
     public MultipartConfigElement multipartConfigElement(){
         MultipartConfigFactory factory = new MultipartConfigFactory();
         //  单个数据大小
-        factory.setMaxFileSize(DataSize.ofMegabytes(300)); // KB,MB
+        factory.setMaxFileSize(DataSize.ofMegabytes(100)); // KB,MB
         /// 总上传数据大小
         factory.setMaxRequestSize(DataSize.ofMegabytes(300));
         return factory.createMultipartConfig();

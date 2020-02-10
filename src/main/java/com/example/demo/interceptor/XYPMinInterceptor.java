@@ -16,7 +16,8 @@ import javax.servlet.http.HttpServletResponse;
 public class XYPMinInterceptor implements HandlerInterceptor {
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler){
        User user = (User) request.getSession().getAttribute("userInfo");
-        System.out.println("登陆状态："+user==null? "未登陆":"已登录");
+       String state= user==null ? "未登陆":"已登录";
+       System.out.println("登陆状态："+state);
        if (user==null){
            throw new LoginException("登陆失效");
        }

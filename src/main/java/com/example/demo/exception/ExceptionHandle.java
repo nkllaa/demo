@@ -21,21 +21,30 @@ public class ExceptionHandle extends ResponseUtils {
 
     @ExceptionHandler(RuntimeException.class)
     @ResponseBody
-    public Object RuntimeExceptionHandler(RuntimeException exception,HttpServletRequest request,WebRequest webRequest) {
-        if (exception instanceof BizException || exception instanceof LoginException){
-            if (isAjaxRequest(webRequest)){
+    public Object RuntimeExceptionHandler(RuntimeException exception,HttpServletRequest request) {
+        if (exception instanceof BizException){
+            if (isAjaxRequest(request)){
                 return this.setResponse(this.Fail,exception.getMessage());
             }
             else {
                 request.setAttribute("errormsg",exception.getMessage());
                 return new ModelAndView("../static/error/404");
             }
-        }else {
+        }else if (exception instanceof LoginException){
+            if (isAjaxRequest(request)){
+                return this.setResponse(this.Fail,exception.getMessage());
+            }
+            else {
+                request.setAttribute("errormsg",exception.getMessage());
+                return new ModelAndView("../static/login");
+            }
+        }
+        else {
             exception.printStackTrace(new java.io.PrintWriter(buf, true));
             String expMessage = buf.toString();
             //打印异常信息
             System.out.println(expMessage);
-            if (isAjaxRequest(webRequest)){
+            if (isAjaxRequest(request)){
                 return this.setResponse(this.Fail,"系统异常");
             }
             else {
@@ -46,7 +55,7 @@ public class ExceptionHandle extends ResponseUtils {
     }
     @ExceptionHandler(IOException.class)
     @ResponseBody
-    public Object IoHandler(IOException exception,HttpServletRequest request,WebRequest webRequest){
+    public Object IoHandler(IOException exception,HttpServletRequest request){
         System.out.println(exception.getMessage());
         exception.printStackTrace(new java.io.PrintWriter(buf, true));
         String expMessage = buf.toString();
@@ -57,8 +66,8 @@ public class ExceptionHandle extends ResponseUtils {
         }
         //打印异常信息
         System.out.println(expMessage);
-        if (isAjaxRequest(webRequest)){
-            return this.setResponse(this.Fail,"文件系统异常");
+        if (isAjaxRequest(request)){
+            return this.setResponse(this.Fail, "文件系统异常");
         }
         else {
             request.setAttribute("errormsg","文件系统异常");
@@ -72,8 +81,8 @@ public class ExceptionHandle extends ResponseUtils {
      * @Param [webRequest]
      * @return boolean
      **/
-    public static boolean isAjaxRequest(WebRequest webRequest) {
-        String requestedWith = webRequest.getHeader("X-Requested-With");
+    public static boolean isAjaxRequest(HttpServletRequest request) {
+        String requestedWith = request.getHeader("X-Requested-With");
         return requestedWith != null ? "XMLHttpRequest".equals(requestedWith) : false;
     }
 }
